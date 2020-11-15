@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { auth, database } from '../../config';
 
-export default function Home({ navigation }) {
+export default function Home() {
 	const [isLogin, setIsLogin] = useState(false);
 	const [email, setEmail] = useState('');
 	const [pass, setPass] = useState('');
@@ -23,7 +23,7 @@ export default function Home({ navigation }) {
 			}
 		});
 
-		console.log(database.ref('/users'));
+		// console.log(database.ref('/users'));
 
 		database.ref('refName').once('value', (snapshot) => {
 			console.log(snapshot);

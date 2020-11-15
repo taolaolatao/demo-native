@@ -6,7 +6,9 @@ export default class Upload extends PureComponent {
 	render() {
 		return (
 			<View style={styles.root}>
-				<Text>Hello Upload </Text>
+				<View style={styles.title}>
+					<Text>Upload</Text>
+				</View>
 			</View>
 		);
 	}

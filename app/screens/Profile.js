@@ -6,7 +6,9 @@ export default class Profile extends PureComponent {
 	render() {
 		return (
 			<View style={styles.root}>
-				<Text>Hello Profile </Text>
+				<View style={styles.title}>
+					<Text>Profile</Text>
+				</View>
 			</View>
 		);
 	}
