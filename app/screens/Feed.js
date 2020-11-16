@@ -1,11 +1,62 @@
 import React, { PureComponent } from 'react';
 import { Text, View, Image, FlatList, StyleSheet } from 'react-native';
+import { database } from '../../config';
 import styles from '../styles/global';
 
 export default class Feed extends PureComponent {
 	state = {
 		refresh: false,
+		loading: true,
 		photoFeed: [0, 1, 2, 3, 4],
+	};
+
+	componentDidMount() {
+		this.loadFeed();
+	}
+
+	loadFeed = () => {
+		this.setState({
+			refresh: true,
+			photoFeed: [],
+		});
+
+		database
+			.ref('refName/Photos')
+			.orderByChild('posted')
+			.once('value', async (snapshot) => {
+				const data = snapshot.val();
+				if (!data) return;
+
+				let photoFeed = [];
+
+				for (const key in data) {
+					const photo = data[key];
+					const users = await database
+						.ref('refName/Users')
+						.child(photo.author)
+						.once('value');
+					const user = users.val();
+					if (user) {
+						photoFeed = [
+							...photoFeed,
+							{
+								_id: key,
+								url: photo.uri,
+								caption: photo.caption,
+								posted: photo.posted,
+								author: user.username,
+							},
+						];
+					}
+				}
+
+				if (photoFeed.length) {
+					this.setState({
+						photoFeed,
+						refresh: false,
+					});
+				}
+			});
 	};
 
 	loadMore = () => {
