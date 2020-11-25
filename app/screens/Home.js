@@ -7,7 +7,7 @@ import {
 	TextInput,
 	TouchableOpacity,
 } from 'react-native';
-import { auth, database } from '../../config';
+import { auth } from '../../config';
 
 export default function Home() {
 	const [isLogin, setIsLogin] = useState(false);
@@ -21,12 +21,6 @@ export default function Home() {
 			} else {
 				setIsLogin(false);
 			}
-		});
-
-		// console.log(database.ref('/users'));
-
-		database.ref('refName').once('value', (snapshot) => {
-			console.log(snapshot);
 		});
 	}, []);
 

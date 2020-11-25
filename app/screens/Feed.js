@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Text, View, Image, FlatList, StyleSheet } from 'react-native';
 import { database } from '../../config';
+import { timeConverter } from '../../helpers';
 import styles from '../styles/global';
 
 export default class Feed extends PureComponent {
@@ -43,7 +44,7 @@ export default class Feed extends PureComponent {
 								_id: key,
 								url: photo.uri,
 								caption: photo.caption,
-								posted: photo.posted,
+								posted: timeConverter(photo.posted),
 								author: user.username,
 							},
 						];
@@ -54,6 +55,7 @@ export default class Feed extends PureComponent {
 					this.setState({
 						photoFeed,
 						refresh: false,
+						loading: false,
 					});
 				}
 			});
@@ -67,7 +69,8 @@ export default class Feed extends PureComponent {
 	};
 
 	render() {
-		const { refresh, photoFeed } = this.state;
+		const { refresh, loading, photoFeed } = this.state;
+		console.log(this.state);
 
 		return (
 			<View style={styles.root}>
@@ -75,42 +78,48 @@ export default class Feed extends PureComponent {
 					<Text>New Feed</Text>
 				</View>
 
-				<FlatList
-					refreshing={refresh}
-					onRefresh={this.loadMore}
-					keyExtractor={(_, index) => index.toString()}
-					data={photoFeed}
-					style={stylesLocal.list}
-					renderItem={({ index }) => (
-						<View key={index} style={stylesLocal.post}>
-							<View style={stylesLocal.titlePost}>
-								<Text>Time Ago</Text>
-								<Text>@VHM</Text>
-							</View>
+				{loading ? (
+					<View style={styles.center}>
+						<Text>Loading...</Text>
+					</View>
+				) : (
+					<FlatList
+						refreshing={refresh}
+						onRefresh={this.loadMore}
+						keyExtractor={(_, index) => index.toString()}
+						data={photoFeed}
+						style={stylesLocal.list}
+						renderItem={({ item, index }) => (
+							<View key={index} style={stylesLocal.post}>
+								<View style={stylesLocal.titlePost}>
+									<Text>{item.posted}</Text>
+									<Text>{item.author}</Text>
+								</View>
 
-							<View>
-								<Image
-									source={{
-										uri: `https://source.unsplash.com/random/500x${Math.floor(
-											Math.random() * 800 + 500
-										)}`,
-									}}
-									style={stylesLocal.picture}
-								/>
-							</View>
+								<View>
+									<Image
+										source={{
+											uri: item.url,
+										}}
+										style={stylesLocal.picture}
+									/>
+								</View>
 
-							<View style={stylesLocal.comment}>
-								<Text>Caption tab here...</Text>
-								<Text>View Comments...</Text>
+								<View style={stylesLocal.comment}>
+									<Text>{item.caption}</Text>
+									<Text>View Comments...</Text>
+								</View>
 							</View>
-						</View>
-					)}
-				/>
+						)}
+					/>
+				)}
 			</View>
 		);
 	}
 }
-
+// `https://source.unsplash.com/random/500x${Math.floor(
+// 												Math.random() * 800 + 500
+// 											)}`
 const stylesLocal = StyleSheet.create({
 	picture: {
 		resizeMode: 'cover',
